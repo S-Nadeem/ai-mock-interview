@@ -8,7 +8,7 @@ const Header = () => {
   const path = usePathname();
 
   return (
-    <div className="flex items-center justify-between p-5 shadow-sm bg-secondary">
+    <div className="flex items-center justify-between p-3 shadow-sm bg-secondary">
       <Image src={"./logo.svg"} height={100} width={160} alt="logo" />
       <ul className="hidden gap-5 md:flex">
         <li

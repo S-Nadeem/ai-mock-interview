@@ -33,13 +33,14 @@ const AddNewInterview = () => {
     setLoading(true);
     const inputPrompt = `Job Position:${jobPosition} , Job Description:${jobDesc} Years of Experience is ${jobExp} Depends on this information can you give me ${process.env.NEXT_PUBLIC_PROMPT_QUESTIONS_NUMBER} interview Questions with answered in JSON format Dont give explanations for this questions at last`;
     const result = await chatSession.sendMessage(inputPrompt);
-    const rawData = result.response
+    const rawData = await result.response
       .text()
       .replace("```json", "")
       .replace("```", "")
       .trim();
     const mockData = JSON.parse(rawData);
     setJsonDataResponse(mockData);
+    console.log(JsonDataResponse);
 
     if (mockData) {
       const dbResponse = await db
@@ -55,21 +56,22 @@ const AddNewInterview = () => {
         })
         .returning({ mockId: MockInterview.mockId });
       console.log("dbResponse", dbResponse);
-      setLoading(false);
+
+      const interviewId = dbResponse[0]?.mockId;
+      if (dbResponse) {
+        setOpenDialog(false);
+        router.push(`/dashboard/interview/${interviewId}`);
+      }
     } else {
-      throw new Error("failed Data");
+      console.log("Error");
     }
-    console.log(dbResponse);
-    if (dbResponse) {
-      setOpenDialog(false);
-      router.push("/dashboard/interview/" + dbResponse[0]?.mockId);
-    }
+    setLoading(false);
   };
 
   return (
     <div>
       <div
-        className="p-10 border rounded-lg hover:shadow-md bg-secondary hover:scale-105"
+        className="p-10 border rounded-lg cursor-pointer hover:shadow-md bg-secondary hover:scale-105"
         onClick={() => setOpenDialog(true)}
       >
         <span className="block text-xl text-center">+ Add New</span>
